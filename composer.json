@@ -23,20 +23,13 @@
     "psr-4": { "FilamentCache\\Tests\\": "tests/" }
   },
   "extra": {
-    "laravel": {
-      "providers": ["FilamentCache\\FilamentCacheServiceProvider"]
-    },
-    "branch-alias": {
-      "dev-main": "1.x-dev"
-    }
-  },
-  "replace": {
-    "mohammedJalal99/filament-cache-plugin": "self.version"
-  },
-  "conflict": {
-    "filament/filament": "<3.0"
+    "laravel": { "providers": ["FilamentCache\\FilamentCacheServiceProvider"] },
+    "branch-alias": { "dev-main": "1.x-dev" }
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
-  "config": { "sort-packages": true }
+  "config": { "sort-packages": true },
+  "scripts": {
+    "test": "phpunit"
+  }
 }
