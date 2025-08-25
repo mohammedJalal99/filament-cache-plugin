@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/packagist/l/mohammedJalal99/filament-cache-plugin.svg?style=flat-square)](https://packagist.org/packages/mohammedJalal99/filament-cache-plugin)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/banner.svg" alt="Filament Cache Plugin" width="800">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/banner.svg" alt="Filament Cache Plugin" width="800">
 </p>
 
 **The ultimate caching solution for Filament PHP.** Supercharge your admin panels with intelligent, zero-config caching that works out of the box. Experience **10x faster page loads** and dramatically improved user experience.
@@ -47,7 +47,7 @@ Fine-tune every aspect of caching
 Monitor your cache performance in real-time with the built-in dashboard:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/cache-dashboard.svg" alt="Cache Dashboard" width="800">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/cache-dashboard.svg" alt="Cache Dashboard" width="800">
 </p>
 
 Access via: **Admin Panel → Tools → Cache Dashboard**
@@ -66,7 +66,7 @@ Access via: **Admin Panel → Tools → Cache Dashboard**
 Here's how easy it is to cache everything in your Filament resources:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/code-example.svg" alt="Code Example" width="700">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/code-example.svg" alt="Code Example" width="700">
 </p>
 
 ```php
@@ -125,7 +125,7 @@ class OrderResource extends Resource
 ## 🎬 Performance Demo
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/performance-demo.gif" alt="Performance Demo" width="600">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/performance-demo.gif" alt="Performance Demo" width="600">
 </p>
 
 **Before vs After Performance:**
@@ -150,7 +150,7 @@ class OrderResource extends Resource
 ## 🚀 Installation & Setup
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/installation-steps.svg" alt="Installation Steps" width="700">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/installation-steps.svg" alt="Installation Steps" width="700">
 </p>
 
 Install the plugin via Composer:
@@ -544,7 +544,7 @@ php artisan filament-cache:clear --pattern="user_*"
 ## 🏆 Performance Benchmarks
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/performance-chart.svg" alt="Performance Benchmarks" width="800">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/performance-chart.svg" alt="Performance Benchmarks" width="800">
 </p>
 
 Real-world performance improvements with the plugin:
@@ -713,7 +713,7 @@ composer test-coverage
 ## 📋 Requirements & Compatibility
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/compatibility.svg" alt="Compatibility" width="600">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/compatibility.svg" alt="Compatibility" width="600">
 </p>
 
 ### Minimum Requirements
@@ -797,7 +797,7 @@ Join our growing community:
 ---
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/footer.svg" alt="Made with ❤️ for Filament" width="500">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/art/footer.svg" alt="Made with ❤️ for Filament" width="500">
 </p>
 
 <p align="center">
