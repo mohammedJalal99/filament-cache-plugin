@@ -2,6 +2,7 @@
 
 namespace FilamentCache;
 
+use FilamentCache\Commands\ClearCacheCommand;
 use Illuminate\Support\ServiceProvider;
 
 class FilamentCacheServiceProvider extends ServiceProvider
@@ -12,6 +13,13 @@ class FilamentCacheServiceProvider extends ServiceProvider
             __DIR__.'/../config/filament-cache.php',
             'filament-cache'
         );
+
+        // Register the cache clearing command
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ClearCacheCommand::class,
+            ]);
+        }
     }
 
     public function boot(): void
