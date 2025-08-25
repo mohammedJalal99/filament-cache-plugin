@@ -1,0 +1,73 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <radialGradient id="avatarGradient" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5576c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#667eea;stop-opacity:1" />
+    </radialGradient>
+    
+    <!-- Hexagon Pattern -->
+    <pattern id="hexPattern" width="30" height="26" patternUnits="userSpaceOnUse">
+      <polygon points="15,2 25,8 25,18 15,24 5,18 5,8" fill="none" 
+               stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+    </pattern>
+    
+    <!-- Strong Glow -->
+    <filter id="avatarGlow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Rotation Animation -->
+    <animateTransform id="rotate" attributeName="transform" type="rotate" 
+                      values="0 200 200;360 200 200" dur="20s" repeatCount="indefinite"/>
+  </defs>
+  
+  <!-- Circular Background -->
+  <circle cx="200" cy="200" r="200" fill="url(#avatarGradient)"/>
+  
+  <!-- Rotating Hexagon Pattern -->
+  <circle cx="200" cy="200" r="180" fill="url(#hexPattern)" opacity="0.3">
+    <animateTransform attributeName="transform" type="rotate" 
+                      values="0 200 200;360 200 200" dur="20s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- Central Icon Background -->
+  <circle cx="200" cy="200" r="100" fill="rgba(255,255,255,0.15)" 
+          stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+  
+  <!-- Cache Symbol -->
+  <text x="200" y="160" font-size="80" fill="white" text-anchor="middle" 
+        font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif" filter="url(#avatarGlow)">
+    🚀
+  </text>
+  
+  <!-- Cache Text -->
+  <text x="200" y="220" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="28" font-weight="900" fill="white" text-anchor="middle" filter="url(#avatarGlow)">
+    CACHE
+  </text>
+  
+  <!-- Subtext -->
+  <text x="200" y="250" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="16" fill="rgba(255,255,255,0.8)" text-anchor="middle">
+    Filament Plugin
+  </text>
+  
+  <!-- Performance Indicators -->
+  <text x="120" y="120" font-size="20" fill="rgba(255,255,255,0.7)" text-anchor="middle">⚡</text>
+  <text x="280" y="120" font-size="18" fill="rgba(255,255,255,0.7)" text-anchor="middle">🔄</text>
+  <text x="120" y="280" font-size="16" fill="rgba(255,255,255,0.7)" text-anchor="middle">💾</text>
+  <text x="280" y="280" font-size="22" fill="rgba(255,255,255,0.7)" text-anchor="middle">📦</text>
+  
+  <!-- Speed Ring -->
+  <circle cx="200" cy="200" r="120" fill="none" stroke="rgba(255,255,255,0.2)" 
+          stroke-width="1" stroke-dasharray="5,5">
+    <animateTransform attributeName="transform" type="rotate" 
+                      values="0 200 200;-360 200 200" dur="15s" repeatCount="indefinite"/>
+  </circle>
+</svg>

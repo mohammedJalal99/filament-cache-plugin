@@ -1,20 +1,11 @@
 {
   "name": "mohammedjalal99/filament-cache-plugin",
   "description": "Complete caching solution for Filament PHP - Cache everything automatically",
-  "keywords": [
-    "filament",
-    "laravel",
-    "cache",
-    "performance",
-    "plugin"
-  ],
+  "keywords": ["filament", "laravel", "cache", "performance", "plugin"],
   "type": "library",
   "license": "MIT",
   "authors": [
-    {
-      "name": "Mohammed Jalal",
-      "email": "hamaj4095@gmail.com"
-    }
+    { "name": "Mohammed Jalal", "email": "hamaj4095@gmail.com" }
   ],
   "require": {
     "php": "^8.1",
@@ -40,8 +31,21 @@
       "providers": [
         "FilamentCache\\FilamentCacheServiceProvider"
       ]
+    },
+    "branch-alias": {
+      "dev-main": "1.x-dev"
     }
   },
-  "minimum-stability": "dev",
-  "prefer-stable": true
+  "replace": {
+    "mohammedJalal99/filament-cache-plugin": "self.version"
+  },
+  "conflict": {
+    "filament/filament": "<3.0"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "scripts": {
+    "test": "phpunit"
+  }
 }

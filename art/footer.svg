@@ -1,0 +1,82 @@
+<svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="footerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Dot Pattern -->
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/>
+    </pattern>
+    
+    <!-- Glow Effect -->
+    <filter id="textGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Heart Animation -->
+    <animateTransform id="heartbeat" attributeName="transform" type="scale" 
+                      values="1;1.2;1;1.1;1" dur="1.5s" repeatCount="indefinite"/>
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="500" height="200" fill="url(#footerGradient)" rx="15"/>
+  
+  <!-- Dot Pattern Overlay -->
+  <rect width="500" height="200" fill="url(#dots)" rx="15"/>
+  
+  <!-- Main Text -->
+  <text x="190" y="90" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="20" font-weight="600" fill="white" filter="url(#textGlow)">Made with</text>
+  
+  <!-- Animated Heart -->
+  <text x="290" y="90" font-size="24" fill="#ff6b6b" filter="url(#textGlow)">
+    <animateTransform attributeName="transform" type="scale" 
+                      values="1;1.2;1;1.1;1" dur="1.5s" repeatCount="indefinite"/>
+    ❤️
+  </text>
+  
+  <!-- For Filament -->
+  <text x="320" y="90" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="20" font-weight="600" fill="white" filter="url(#textGlow)">for Filament</text>
+  
+  <!-- Subtitle -->
+  <text x="250" y="120" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="400" fill="rgba(255,255,255,0.8)" text-anchor="middle">
+    Built for the 
+  </text>
+  <text x="340" y="120" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="600" fill="#f59e0b" text-anchor="start">Filament PHP</text>
+  <text x="420" y="120" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="400" fill="rgba(255,255,255,0.8)" text-anchor="start"> community</text>
+  
+  <!-- Author -->
+  <text x="250" y="140" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="400" fill="rgba(255,255,255,0.8)" text-anchor="middle">
+    by Mohammed Jalal
+  </text>
+  
+  <!-- Decorative Sparkles -->
+  <text x="50" y="50" font-size="12" fill="rgba(255,255,255,0.6)">
+    <animate attributeName="opacity" values="0;1;0" dur="3s" repeatCount="indefinite"/>
+    ✨
+  </text>
+  <text x="420" y="60" font-size="10" fill="rgba(255,255,255,0.5)">
+    <animate attributeName="opacity" values="0;1;0" dur="3s" begin="1s" repeatCount="indefinite"/>
+    ⭐
+  </text>
+  <text x="80" y="160" font-size="14" fill="rgba(255,255,255,0.6)">
+    <animate attributeName="opacity" values="0;1;0" dur="3s" begin="2s" repeatCount="indefinite"/>
+    💫
+  </text>
+  <text x="400" y="150" font-size="12" fill="rgba(255,255,255,0.4)">
+    <animate attributeName="opacity" values="0;1;0" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+    🌟
+  </text>
+</svg>

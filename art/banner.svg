@@ -1,0 +1,69 @@
+<svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5576c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+    </pattern>
+    
+    <!-- Glow Filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="800" height="400" fill="url(#mainGradient)" rx="20"/>
+  
+  <!-- Grid Overlay -->
+  <rect width="800" height="400" fill="url(#grid)" opacity="0.3" rx="20"/>
+  
+  <!-- Lightning Icon -->
+  <text x="680" y="80" font-size="48" fill="rgba(255,255,255,0.7)" filter="url(#glow)">⚡</text>
+  
+  <!-- Cache Icon -->
+  <text x="120" y="80" font-size="48" fill="rgba(255,255,255,0.7)" filter="url(#glow)">🔄</text>
+  
+  <!-- Main Title -->
+  <text x="400" y="170" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="48" font-weight="900" fill="white" text-anchor="middle" 
+        filter="url(#glow)">Filament Cache Plugin</text>
+  
+  <!-- Subtitle -->
+  <text x="400" y="210" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="20" font-weight="500" fill="rgba(255,255,255,0.95)" text-anchor="middle">
+    Supercharge your admin panels with intelligent caching
+  </text>
+  
+  <!-- Feature Pills Background -->
+  <rect x="180" y="250" width="120" height="40" rx="20" fill="rgba(255,255,255,0.15)" 
+        stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <rect x="320" y="250" width="120" height="40" rx="20" fill="rgba(255,255,255,0.15)" 
+        stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <rect x="460" y="250" width="120" height="40" rx="20" fill="rgba(255,255,255,0.15)" 
+        stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  
+  <!-- Feature Pills Text -->
+  <text x="240" y="275" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="600" fill="white" text-anchor="middle">🚀 10x Faster</text>
+  <text x="380" y="275" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="600" fill="white" text-anchor="middle">⚡ Zero Config</text>
+  <text x="520" y="275" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="14" font-weight="600" fill="white" text-anchor="middle">🎯 Smart Caching</text>
+  
+  <!-- Decorative Sparkles -->
+  <text x="150" y="150" font-size="16" fill="rgba(255,255,255,0.6)">✨</text>
+  <text x="650" y="160" font-size="12" fill="rgba(255,255,255,0.5)">⭐</text>
+  <text x="600" y="320" font-size="14" fill="rgba(255,255,255,0.6)">💫</text>
+  <text x="180" y="340" font-size="10" fill="rgba(255,255,255,0.4)">🌟</text>
+</svg>

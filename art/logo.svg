@@ -1,0 +1,52 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Gradient -->
+  <defs>
+    <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f5576c;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4facfe;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Grid Pattern -->
+    <pattern id="logoGrid" width="8" height="8" patternUnits="userSpaceOnUse">
+      <path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+    </pattern>
+    
+    <!-- Glow Filter -->
+    <filter id="logoGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge> 
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Pulse Animation -->
+    <animate id="pulse" attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite"/>
+  </defs>
+  
+  <!-- Main Background -->
+  <rect width="200" height="200" fill="url(#logoGradient)" rx="20"/>
+  
+  <!-- Grid Overlay -->
+  <rect width="200" height="200" fill="url(#logoGrid)" opacity="0.3" rx="20"/>
+  
+  <!-- Cache Symbol -->
+  <text x="100" y="80" font-size="60" fill="white" text-anchor="middle" 
+        font-family="Apple Color Emoji, Segoe UI Emoji, sans-serif" filter="url(#logoGlow)">
+    <animate attributeName="opacity" values="1;0.8;1" dur="2s" repeatCount="indefinite"/>
+    🚀
+  </text>
+  
+  <!-- Main Text -->
+  <text x="100" y="130" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="18" font-weight="bold" fill="white" text-anchor="middle" filter="url(#logoGlow)">
+    CACHE
+  </text>
+  
+  <!-- Subtext -->
+  <text x="100" y="150" font-family="Inter, -apple-system, BlinkMacSystemFont, sans-serif" 
+        font-size="12" fill="rgba(255,255,255,0.8)" text-anchor="middle">
+    Filament
+  </text>
+</svg>
