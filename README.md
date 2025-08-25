@@ -5,7 +5,9 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/mohammedJalal99/filament-cache-plugin.svg?style=flat-square)](https://packagist.org/packages/mohammedJalal99/filament-cache-plugin)
 [![License](https://img.shields.io/packagist/l/mohammedJalal99/filament-cache-plugin.svg?style=flat-square)](https://packagist.org/packages/mohammedJalal99/filament-cache-plugin)
 
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/banner.png" alt="Filament Cache Plugin" width="600">
+</p>
 
 **The ultimate caching solution for Filament PHP.** Supercharge your admin panels with intelligent, zero-config caching that works out of the box. Experience **10x faster page loads** and dramatically improved user experience.
 
@@ -660,7 +662,9 @@ If this plugin helped you, please consider:
 
 ---
 
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/main/art/footer.png" alt="Made with ❤️ for Filament" width="400">
+</p>
 
 <p align="center">
   <strong>Make your Filament apps blazing fast! 🚀</strong>
