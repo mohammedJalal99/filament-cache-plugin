@@ -1,53 +1,39 @@
-# Filament Cache Plugin - Maximum Performance Guide
+# Filament Cache Plugin - Usage Guide
 
-## Overview
-I've completely enhanced your Filament cache plugin to cache **ALL UI components** for maximum performance. No UI element needs to load from scratch anymore.
+## Installation & Setup
 
-## What's Now Cached
+1. **Publish the configuration file:**
+```bash
+php artisan vendor:publish --tag=filament-cache-config
+```
 
-### 🎯 Complete UI Caching
-- **Pages**: Full page responses with headers and content
-- **Forms**: Form schemas, field configurations, validation rules
-- **Tables**: Column definitions, filters, actions, bulk actions
-- **Widgets**: Dashboard widgets, chart data, statistics
-- **Navigation**: Menu items, navigation groups, breadcrumbs
-- **Resources**: Resource pages, relation managers, permissions
-- **Queries**: Database queries with smart cache keys
-- **User Permissions**: Authorization checks cached per user
-
-## Quick Setup for Maximum Performance
-
-### 1. Environment Configuration (.env)
+2. **Configure your environment (.env):**
 ```env
-# Enable all caching features
 FILAMENT_CACHE_ENABLED=true
+FILAMENT_CACHE_TTL=300
+FILAMENT_CACHE_STORE=
 FILAMENT_CACHE_PAGES=true
+FILAMENT_CACHE_NAVIGATION=true  
+FILAMENT_CACHE_QUERIES=true
+
+# Advanced settings
 FILAMENT_CACHE_FORMS=true
 FILAMENT_CACHE_TABLES=true
 FILAMENT_CACHE_WIDGETS=true
-FILAMENT_CACHE_NAVIGATION=true
-FILAMENT_CACHE_QUERIES=true
 FILAMENT_CACHE_PERMISSIONS=true
-FILAMENT_CACHE_RESOURCES=true
+FILAMENT_CACHE_AGGRESSIVE=false
 
-# Enable aggressive caching for maximum performance
-FILAMENT_CACHE_AGGRESSIVE=true
-
-# Optimized TTL values (in seconds)
-FILAMENT_CACHE_TTL_FORMS=1800        # 30 min - forms rarely change
-FILAMENT_CACHE_TTL_TABLES=1800       # 30 min - table structure
-FILAMENT_CACHE_TTL_WIDGETS=300       # 5 min - dynamic data
-FILAMENT_CACHE_TTL_NAVIGATION=3600   # 1 hour - menu structure
+# Specific TTL values for different components
+FILAMENT_CACHE_TTL_FORMS=1800        # 30 minutes - forms don't change often
+FILAMENT_CACHE_TTL_TABLES=1800       # 30 minutes - table structure
+FILAMENT_CACHE_TTL_WIDGETS=300       # 5 minutes - dynamic data
+FILAMENT_CACHE_TTL_NAVIGATION=3600   # 1 hour - rarely changes
 FILAMENT_CACHE_TTL_PERMISSIONS=3600  # 1 hour - user permissions
-FILAMENT_CACHE_TTL_QUERIES=60        # 1 min - database queries
-
-# Use Redis for best performance (optional)
-FILAMENT_CACHE_STORE=redis
+FILAMENT_CACHE_TTL_QUERIES=60        # 1 minute - data queries
 ```
 
-### 2. Register the Plugin
+3. **Register the plugin in your Filament Panel Provider:**
 ```php
-// In your PanelProvider
 use FilamentCache\FilamentCachePlugin;
 
 public function panel(Panel $panel): Panel
@@ -55,80 +41,177 @@ public function panel(Panel $panel): Panel
     return $panel
         ->plugins([
             FilamentCachePlugin::make()
-                ->ttl(600) // Default 10 minutes
+                ->ttl(600) // Optional: override default TTL
         ]);
 }
 ```
 
-### 3. Use Caching Traits in Your Resources
+## Usage - No Traits Required!
 
-#### For Resources:
+This plugin now works **without requiring traits**. You can use simple helper functions anywhere in your Filament resources.
+
+### 1. Cache Database Queries
+
+#### Automatic Query Caching
 ```php
-use FilamentCache\Concerns\CachesResourceComponents;
-
+// In your resources - use the cached() macro
 class UserResource extends Resource
 {
-    use CachesResourceComponents;
-    
-    // All methods automatically cached:
-    // - getFormSchema()
-    // - getTableColumns()
-    // - getTableFilters() 
-    // - getTableActions()
-    // - getRelationManagers()
-    // - permissions checks
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->query(
+                User::where('active', true)->cached(120) // Cache for 2 minutes
+            )
+            ->columns([...]);
+    }
 }
+
+// Count queries
+$totalUsers = User::query()->cachedCount(300); // Cache count for 5 minutes
 ```
 
-#### For Pages:
+#### Using Helper Functions
 ```php
-use FilamentCache\Concerns\CachesPageComponents;
+// Cache any query result
+$activeUsers = filament_cache_query(
+    User::where('active', true), 
+    60 // TTL in seconds
+);
 
-class EditUser extends EditRecord
-{
-    use CachesPageComponents;
-    
-    // Auto-cached:
-    // - getActions()
-    // - getFormSchema()
-    // - getHeaderWidgets()
-    // - getFooterWidgets()
-}
+// Cache count queries
+$userCount = filament_cache_count(
+    User::where('status', 'active'), 
+    300
+);
 ```
 
-#### For Widgets:
-```php
-use FilamentCache\Concerns\CachesWidgetComponents;
+### 2. Cache Form Options
 
+```php
+Forms\Components\Select::make('status')
+    ->options(
+        filament_cache_options('user_statuses', [
+            'active' => 'Active',
+            'pending' => 'Pending', 
+            'inactive' => 'Inactive'
+        ], 1800) // Cache for 30 minutes
+    )
+
+Forms\Components\Select::make('department')
+    ->options(fn() => 
+        filament_cache('department_options', 
+            fn() => Department::pluck('name', 'id')->toArray(),
+            3600 // Cache for 1 hour
+        )
+    )
+```
+
+### 3. Cache Expensive Calculations
+
+```php
+// In table columns
+TextColumn::make('total_orders')
+    ->getStateUsing(fn($record) => 
+        filament_cache("user_orders_{$record->id}", 
+            fn() => $record->orders()->count(),
+            300 // Cache for 5 minutes
+        )
+    )
+
+// In widgets
 class StatsOverview extends BaseWidget
 {
-    use CachesWidgetComponents;
-    
-    // Auto-cached:
-    // - getData()
-    // - getOptions()
-    // - getCards()
+    protected function getCards(): array
+    {
+        return [
+            Stat::make('Total Users', 
+                filament_cache('total_users_stat', 
+                    fn() => User::count(),
+                    300
+                )
+            ),
+            Stat::make('Active Users',
+                filament_cache('active_users_stat',
+                    fn() => User::where('active', true)->count(),
+                    300
+                )
+            ),
+        ];
+    }
 }
 ```
 
-## Manual Cache Control
+### 4. Cache Resource Data
+
+```php
+class UserResource extends Resource
+{
+    // Cache table query
+    public static function getEloquentQuery(): Builder
+    {
+        return filament_cache_query(
+            parent::getEloquentQuery()->with('roles', 'department'),
+            120 // Cache for 2 minutes
+        );
+    }
+
+    // Cache relationship options
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                Select::make('role_id')
+                    ->options(
+                        filament_cache('role_options',
+                            fn() => Role::pluck('name', 'id'),
+                            1800 // Cache for 30 minutes
+                        )
+                    ),
+            ]);
+    }
+}
+```
+
+### 5. Available Helper Functions
+
+```php
+// Cache any value with automatic key generation
+filament_cache(string $key, $callback, int $ttl = null)
+
+// Cache database query results
+filament_cache_query($query, int $ttl = 60)
+
+// Cache count queries
+filament_cache_count($query, int $ttl = 300)
+
+// Cache select options and arrays
+filament_cache_options(string $key, array $options, int $ttl = 1800)
+
+// Forget cached value
+filament_cache_forget(string $key)
+```
+
+## Cache Management
 
 ### Clear Cache Commands
+
 ```bash
-# Clear everything
+# Clear all cache
 php artisan filament-cache:clear
 
-# Clear specific components
+# Clear specific cache types
 php artisan filament-cache:clear --type=pages
+php artisan filament-cache:clear --type=queries
+php artisan filament-cache:clear --type=navigation
 php artisan filament-cache:clear --type=forms
 php artisan filament-cache:clear --type=tables
 php artisan filament-cache:clear --type=widgets
-php artisan filament-cache:clear --type=navigation
-php artisan filament-cache:clear --type=queries
 php artisan filament-cache:clear --type=permissions
 ```
 
 ### Programmatic Cache Management
+
 ```php
 use FilamentCache\CacheHelper;
 
@@ -139,6 +222,8 @@ CacheHelper::clearFilamentCache();
 CacheHelper::clearFormCache();
 CacheHelper::clearTableCache();
 CacheHelper::clearWidgetCache();
+CacheHelper::clearPageCache();
+CacheHelper::clearNavigationCache();
 
 // Clear cache for specific user
 CacheHelper::clearUserCache($userId);
@@ -147,105 +232,96 @@ CacheHelper::clearUserCache($userId);
 $stats = CacheHelper::getCacheStats();
 ```
 
-## Advanced Performance Features
+## Performance Tips
 
-### 1. Aggressive Caching Mode
-When `FILAMENT_CACHE_AGGRESSIVE=true`, all TTL values are multiplied by 3 for maximum caching.
-
-### 2. Smart Cache Keys
-Cache keys include:
-- User ID (user-specific caching)
-- Locale (multi-language support)
-- Query parameters
-- Component class names
-- Filter states
-
-### 3. Automatic Cache Warming (Optional)
+### 1. Choose Appropriate TTL Values
 ```php
-// In config/filament-cache.php
-'warm_cache_on_boot' => true,
-'resources_to_warm' => [
-    App\Filament\Resources\UserResource::class,
-    App\Filament\Resources\PostResource::class,
-],
+// Static data - longer cache
+filament_cache_options('countries', $countries, 3600); // 1 hour
+
+// Dynamic data - shorter cache  
+filament_cache_query(Order::recent(), 60); // 1 minute
+
+// User-specific data - medium cache
+filament_cache("user_stats_{$userId}", $callback, 300); // 5 minutes
 ```
 
-## Performance Impact
-<?php
-### Before Enhancement:
-- Forms loaded fresh each time
-- Table schemas rebuilt on every request
-- Navigation computed repeatedly
-- Database queries executed without caching
-- User permissions checked on each request
-
-### After Enhancement:
-- **Forms**: Cached for 30 minutes (1800s)
-- **Tables**: Cached for 30 minutes 
-- **Navigation**: Cached for 1 hour
-- **Widgets**: Cached for 5 minutes (fresh data)
-- **Queries**: Cached for 1 minute (smart invalidation)
-- **Permissions**: Cached for 1 hour per user
-
-### Expected Performance Gains:
-- **Page Load Time**: 60-80% faster
-- **Database Queries**: Reduced by 70-90%
-- **Memory Usage**: Reduced by 40-60%
-- **Server Load**: Reduced by 50-70%
-
-## Best Practices
-
-### 1. Cache Invalidation
-Clear cache after:
-- User role changes
-- Resource structure updates
-- Configuration changes
-
+### 2. Cache Invalidation
 ```php
-// After user role change
-CacheHelper::clearUserCache($userId);
-
-// After resource updates
-CacheHelper::clearTableCache();
-CacheHelper::clearFormCache();
+// In your models, clear cache when data changes
+class User extends Model
+{
+    protected static function booted()
+    {
+        static::saved(function () {
+            filament_cache_forget('total_users_stat');
+            filament_cache_forget('active_users_stat');
+            CacheHelper::clearTableCache();
+        });
+    }
+}
 ```
 
-### 2. Monitoring
-```php
-// Check cache performance
-$stats = CacheHelper::getCacheStats();
-dd($stats); // Shows cache store, status, estimated keys
-```
-
-### 3. Development vs Production
-```php
-// In .env for development (shorter cache times)
-FILAMENT_CACHE_TTL_FORMS=60      # 1 minute
-FILAMENT_CACHE_TTL_TABLES=60     # 1 minute
-
-// In .env for production (longer cache times)
-FILAMENT_CACHE_TTL_FORMS=3600    # 1 hour
-FILAMENT_CACHE_TTL_TABLES=3600   # 1 hour
-```
+### 3. Aggressive Caching Mode
+Set `FILAMENT_CACHE_AGGRESSIVE=true` in your .env file to automatically triple all cache times for maximum performance.
 
 ## Troubleshooting
 
 ### Cache Not Working?
-1. Check cache driver: `php artisan cache:table` (for database driver)
-2. Verify Redis connection (if using Redis)
+1. Check if caching is enabled: `config('filament-cache.enabled')`
+2. Verify cache driver: `php artisan cache:table` (for database driver)
 3. Clear all cache: `php artisan cache:clear && php artisan filament-cache:clear`
 
-### Stale Data?
-1. Reduce TTL values for dynamic content
-2. Implement cache invalidation in your models:
+### Stale Data Issues?
+1. Reduce TTL values for frequently changing data
+2. Implement cache invalidation in your models
+3. Use shorter cache times during development
+
+### Performance Not Improved?
+1. Enable query caching: `FILAMENT_CACHE_QUERIES=true`
+2. Use Redis cache store: `FILAMENT_CACHE_STORE=redis`
+3. Enable aggressive caching: `FILAMENT_CACHE_AGGRESSIVE=true`
+4. Monitor cache hit rates with `CacheHelper::getCacheStats()`
+
+## Common Patterns
+
+### Caching Expensive Form Options
 ```php
-// In your model
-protected static function booted()
+Select::make('category_id')
+    ->options(fn() => 
+        filament_cache('category_tree',
+            fn() => Category::with('children')->get()->pluck('full_name', 'id'),
+            1800
+        )
+    )
+```
+
+### Caching Dashboard Statistics
+```php
+protected function getStats(): array
 {
-    static::saved(function () {
-        CacheHelper::clearTableCache();
-    });
+    return [
+        'total' => filament_cache('dashboard_total', fn() => Model::count(), 300),
+        'today' => filament_cache('dashboard_today', fn() => Model::whereDate('created_at', today())->count(), 300),
+        'growth' => filament_cache('dashboard_growth', fn() => $this->calculateGrowth(), 600),
+    ];
 }
 ```
 
-Your Filament application will now have **maximum performance** with comprehensive UI caching!
+### Caching Complex Filters
+```php
+public function getTableFilters(): array
+{
+    return [
+        SelectFilter::make('category')
+            ->options(
+                filament_cache('filter_categories',
+                    fn() => Category::pluck('name', 'id')->toArray(),
+                    3600
+                )
+            ),
+    ];
+}
+```
+
+This approach gives you maximum performance without requiring any traits - just use the helper functions where you need caching!

@@ -85,23 +85,11 @@ class FilamentCachePlugin implements Plugin
 
     private function bootNavigationCaching(Panel $panel): void
     {
-        // Cache navigation items
-        $panel->navigationGroups(function () {
-            $cacheKey = 'filament_navigation_groups_' . auth()->id() . '_' . app()->getLocale();
+        // Navigation caching will be handled at the middleware level
+        // We don't override Panel methods as they expect specific parameter types
 
-            return $this->getCacheStore()->remember($cacheKey, config('filament-cache.default_ttl', 300), function () use ($panel) {
-                return $panel->getNavigationGroups();
-            });
-        });
-
-        // Cache navigation items
-        $panel->navigationItems(function () {
-            $cacheKey = 'filament_navigation_items_' . auth()->id() . '_' . app()->getLocale();
-
-            return $this->getCacheStore()->remember($cacheKey, config('filament-cache.default_ttl', 300), function () use ($panel) {
-                return $panel->getNavigationItems();
-            });
-        });
+        // Instead, we'll cache navigation data when it's rendered
+        // This approach is safer and doesn't interfere with Filament's core functionality
     }
 
     private function getCacheStore()
