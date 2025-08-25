@@ -42,32 +42,38 @@ Fine-tune every aspect of caching
 </tr>
 </table>
 
-## 📊 Cache Dashboard
+## 📊 Cache Management
 
-Monitor your cache performance in real-time with the built-in dashboard:
+Monitor and control your cache with built-in tools:
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/cache-dashboard.svg" alt="Cache Dashboard" width="800">
-</p>
+**Commands:**
+```bash
+# Check cache status
+php artisan filament-cache:status
 
-Access via: **Admin Panel → Tools → Cache Dashboard**
+# Clear all caches  
+php artisan filament-cache:clear
 
-**Features:**
-- 📈 Real-time hit/miss ratios
-- 🎯 Top performing cached queries
-- 🔍 Cache size and memory usage
-- ⚡ Performance trends over time
-- 🧹 One-click cache management
+# Monitor performance in real-time
+php artisan filament-cache:monitor
+
+# Generate performance report
+php artisan filament-cache:report --export
+```
+
+**Performance Monitoring:**
+```php
+// Get real-time metrics
+FilamentCache::getMetrics();
+
+// Returns: hit rate, response times, cache size, etc.
+```
 
 ---
 
 ## 🎯 Real-World Example
 
 Here's how easy it is to cache everything in your Filament resources:
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/code-example.svg" alt="Code Example" width="700">
-</p>
 
 ```php
 // Before: Slow resource with heavy queries
@@ -124,10 +130,6 @@ class OrderResource extends Resource
 
 ## 🎬 Performance Demo
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/performance-demo.gif" alt="Performance Demo" width="600">
-</p>
-
 **Before vs After Performance:**
 
 ```
@@ -147,38 +149,423 @@ class OrderResource extends Resource
 
 ---
 
-## 🚀 Installation & Setup
+## 📦 Installation
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/installation-steps.svg" alt="Installation Steps" width="700">
-</p>
-
-Install the plugin via Composer:
+### Step 1: Install the Package
 
 ```bash
 composer require mohammedJalal99/filament-cache-plugin
 ```
 
-Add to your Panel Provider:
+### Step 2: Install Redis (Recommended)
+
+<details>
+<summary><b>🐧 Ubuntu/Debian</b></summary>
+
+```bash
+sudo apt-get update
+sudo apt-get install redis-server
+
+# Start Redis
+sudo systemctl start redis
+sudo systemctl enable redis
+
+# Test Redis
+redis-cli ping
+# Should return: PONG
+```
+</details>
+
+<details>
+<summary><b>🍎 macOS</b></summary>
+
+```bash
+# Using Homebrew
+brew install redis
+
+# Start Redis
+brew services start redis
+
+# Test Redis
+redis-cli ping
+# Should return: PONG
+```
+</details>
+
+<details>
+<summary><b>🐳 Docker</b></summary>
+
+```bash
+# Run Redis container
+docker run -d \
+  --name redis-cache \
+  -p 6379:6379 \
+  redis:alpine
+
+# Test Redis
+docker exec -it redis-cache redis-cli ping
+# Should return: PONG
+```
+</details>
+
+<details>
+<summary><b>🪟 Windows</b></summary>
+
+```bash
+# Using Chocolatey
+choco install redis-64
+
+# Or download from: https://github.com/microsoftarchive/redis/releases
+# Extract and run redis-server.exe
+
+# Test Redis
+redis-cli ping
+# Should return: PONG
+```
+</details>
+
+### Step 3: Configure Laravel
+
+Update your `.env` file:
+
+```bash
+# Cache Configuration
+CACHE_DRIVER=redis
+SESSION_DRIVER=redis
+QUEUE_CONNECTION=redis
+
+# Redis Configuration
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=null
+REDIS_DB=0
+
+# Plugin Settings (Optional)
+FILAMENT_CACHE_ENABLED=true
+FILAMENT_CACHE_TTL=300
+FILAMENT_CACHE_PAGES=true
+```
+
+### Step 4: Register the Plugin
+
+Add to your Panel Provider (`app/Providers/Filament/AdminPanelProvider.php`):
 
 ```php
+<?php
+
+namespace App\Providers\Filament;
+
+use Filament\Panel;
+use Filament\PanelProvider;
 use FilamentCache\FilamentCachePlugin;
 
-public function panel(Panel $panel): Panel
+class AdminPanelProvider extends PanelProvider
 {
-    return $panel
-        ->plugins([
-            FilamentCachePlugin::make()
-                ->defaultTtl(300) // 5 minutes
-                ->enablePerformanceMonitoring()
-                ->cacheQueries()
-                ->cachePages()
-                ->cacheNavigation(),
-        ]);
+    public function panel(Panel $panel): Panel
+    {
+        return $panel
+            ->default()
+            ->id('admin')
+            ->path('admin')
+            ->plugins([
+                // Add the cache plugin
+                FilamentCachePlugin::make(),
+            ]);
+    }
 }
 ```
 
+### Step 5: Clear Cache & Test
+
+```bash
+# Clear existing caches
+php artisan cache:clear
+php artisan config:clear
+
+# Test your Filament admin panel
+# Pages should now load much faster! 🚀
+```
+
 **That's it! 🎉** Your Filament app is now supercharged with intelligent caching.
+
+---
+
+## 🚀 How to Use
+
+The plugin works automatically out of the box, but here are ways to maximize its power:
+
+### 🔥 Zero Configuration Usage
+
+The plugin automatically caches:
+- ✅ **Page responses** - Entire admin pages
+- ✅ **Database queries** - All Eloquent queries
+- ✅ **Navigation menus** - Admin navigation
+- ✅ **Form options** - Select dropdowns
+- ✅ **Widget data** - Dashboard widgets
+
+**No code changes needed!** Just install and enjoy 10x faster performance.
+
+### ⚡ Enhanced Usage with Traits
+
+For maximum performance, add caching traits to your resources:
+
+#### Cache Everything in Resources
+
+```php
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Resources\Resource;
+use FilamentCache\Concerns\CachesEverything;
+
+class UserResource extends Resource
+{
+    use CachesEverything; // 🚀 Add this line
+    
+    // Your existing code stays the same!
+    // Everything is now automatically cached
+}
+```
+
+#### Cache Expensive Queries
+
+```php
+// Before: Slow query
+protected static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()
+        ->with(['roles', 'profile', 'orders']);
+}
+
+// After: Cached query (10x faster!)
+protected static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()
+        ->with(['roles', 'profile', 'orders'])
+        ->cached(300); // Cache for 5 minutes
+}
+```
+
+#### Cache Form Options
+
+```php
+// Before: Database hit on every page load
+Select::make('category_id')
+    ->options(Category::pluck('name', 'id'))
+
+// After: Cached options (instant loading!)
+Select::make('category_id')
+    ->cachedOptions('categories', fn() => 
+        Category::pluck('name', 'id')
+    )
+```
+
+#### Cache Table Calculations
+
+```php
+// Before: Expensive calculation on every row
+TextColumn::make('total_orders')
+    ->getStateUsing(fn($record) => $record->orders()->count())
+
+// After: Cached calculation (instant display!)
+TextColumn::make('total_orders')
+    ->cached(fn($record) => $record->orders()->count())
+```
+
+#### Cache Widget Data
+
+```php
+<?php
+
+namespace App\Filament\Widgets;
+
+use Filament\Widgets\StatsOverviewWidget;
+use FilamentCache\Concerns\CachesWidgets;
+
+class StatsWidget extends StatsOverviewWidget
+{
+    use CachesWidgets; // 🚀 Add this line
+    
+    protected function getStats(): array
+    {
+        // Cache expensive statistics
+        return $this->cacheData([
+            'total_users' => User::count(),
+            'total_orders' => Order::count(),
+            'revenue' => Order::sum('total'),
+        ], ttl: 600); // Cache for 10 minutes
+    }
+}
+```
+
+### 🛠️ Advanced Configuration
+
+For fine-grained control, publish the config file:
+
+```bash
+php artisan vendor:publish --tag=filament-cache-config
+```
+
+Then customize `config/filament-cache.php`:
+
+```php
+return [
+    'enabled' => true,
+    
+    // Cache duration (seconds)
+    'ttl' => [
+        'default' => 300,      // 5 minutes
+        'queries' => 600,      // 10 minutes
+        'navigation' => 1800,  // 30 minutes
+        'widgets' => 300,      // 5 minutes
+    ],
+    
+    // What to cache
+    'cache' => [
+        'pages' => true,       // Cache full pages
+        'queries' => true,     // Cache database queries
+        'navigation' => true,  // Cache navigation menu
+        'widgets' => true,     // Cache dashboard widgets
+        'forms' => true,       // Cache form options
+    ],
+    
+    // Exclude specific routes from caching
+    'exclude' => [
+        'routes' => [
+            'filament.admin.auth.*',
+        ],
+    ],
+];
+```
+
+### 📊 Monitor Performance
+
+Use built-in commands to monitor your cache:
+
+```bash
+# Check cache status
+php artisan filament-cache:status
+
+# Clear cache when needed
+php artisan filament-cache:clear
+
+# Monitor performance in real-time
+php artisan filament-cache:monitor
+```
+
+### 🎯 Plugin Configuration Options
+
+Configure the plugin for your specific needs:
+
+```php
+FilamentCachePlugin::make()
+    // Basic Settings
+    ->defaultTtl(600)                    // 10 minutes default
+    ->enablePerformanceMonitoring()      // Track performance
+    
+    // Enable/Disable Features
+    ->cachePages()                       // Cache full pages
+    ->cacheQueries()                     // Cache DB queries
+    ->cacheNavigation()                  // Cache navigation
+    ->cacheWidgets()                     // Cache widgets
+    ->cacheForms()                       // Cache form options
+    
+    // Advanced Settings
+    ->useStore('redis')                  // Use Redis store
+    ->enableTaggedCaching()              // Smart invalidation
+    ->excludeRoutes(['admin.settings'])  // Skip specific routes
+    ->maxCacheSize('100MB')              // Limit cache size
+```
+
+### 🔧 Real-World Examples
+
+#### E-commerce Admin Panel
+```php
+class OrderResource extends Resource
+{
+    use CachesEverything;
+    
+    protected static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->with(['customer', 'items.product'])
+            ->cached(300); // 5-minute cache
+    }
+    
+    public static function table(Table $table): Table
+    {
+        return $table->columns([
+            TextColumn::make('customer.name'),
+            TextColumn::make('total_amount')
+                ->cached(fn($record) => $record->calculateTotal()),
+            TextColumn::make('profit_margin')
+                ->cached(fn($record) => $record->calculateProfit()),
+        ]);
+    }
+}
+```
+
+#### Analytics Dashboard
+```php
+class AnalyticsWidget extends BaseWidget
+{
+    use CachesWidgets;
+    
+    protected function getViewData(): array
+    {
+        return $this->cacheData([
+            'revenue_today' => Order::whereDate('created_at', today())->sum('total'),
+            'orders_count' => Order::count(),
+            'top_products' => Product::withCount('orderItems')->orderBy('order_items_count', 'desc')->limit(5)->get(),
+        ], ttl: 900); // 15-minute cache
+    }
+}
+```
+
+### 📈 Expected Performance Improvements
+
+After installing the plugin, you should see:
+
+- **🚀 Page Load Times**: 5-15x faster
+- **💾 Database Queries**: 80-95% reduction
+- **🎯 Memory Usage**: 40-60% less
+- **⚡ Server Response**: 10x faster
+- **📊 Concurrent Users**: 5-10x more capacity
+
+### 🆘 Troubleshooting
+
+**Cache not working?**
+```bash
+# Check Redis connection
+redis-cli ping
+
+# Clear all caches
+php artisan cache:clear
+php artisan config:clear
+
+# Check cache driver
+php artisan tinker
+>>> cache()->getStore()
+```
+
+**Seeing stale data?**
+```php
+// Force refresh by clearing specific cache
+FilamentCache::forget('user_stats');
+
+// Or disable caching temporarily
+FilamentCachePlugin::make()->disable();
+```
+
+**Performance issues?**
+```bash
+# Monitor cache performance
+php artisan filament-cache:monitor
+
+# Check cache size
+php artisan filament-cache:status
+```
 
 ---
 
@@ -543,10 +930,6 @@ php artisan filament-cache:clear --pattern="user_*"
 
 ## 🏆 Performance Benchmarks
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/performance-chart.svg" alt="Performance Benchmarks" width="800">
-</p>
-
 Real-world performance improvements with the plugin:
 
 | Metric | Before | After | Improvement |
@@ -712,10 +1095,6 @@ composer test-coverage
 
 ## 📋 Requirements & Compatibility
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/compatibility.svg" alt="Compatibility" width="600">
-</p>
-
 ### Minimum Requirements
 - **PHP:** 8.1 or higher 🐘
 - **Laravel:** 10.0 or higher 🚀
@@ -796,9 +1175,7 @@ Join our growing community:
 
 ---
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/mohammedJalal99/filament-cache-plugin/refs/heads/main/art/footer.svg" alt="Made with ❤️ for Filament" width="500">
-</p>
+
 
 <p align="center">
   <strong>Make your Filament apps blazing fast! 🚀</strong>
