@@ -70,8 +70,16 @@ class FilamentCachePlugin implements Plugin
             $ttl = $ttl ?? config('filament-cache.default_ttl');
             $key = 'query_' . md5($this->toSql() . serialize($this->getBindings()));
 
-            return cache()->store(config('filament-cache.cache_store'))
-                ->remember($key, $ttl, fn() => $this->get());
+            try {
+                $storeConfig = config('filament-cache.cache_store');
+                $store = $storeConfig ? cache()->store($storeConfig) : cache();
+
+                return $store->remember($key, $ttl, fn() => $this->get());
+            } catch (\Exception $e) {
+                // If caching fails, just return the query result without caching
+                \Log::warning('Query cache error: ' . $e->getMessage());
+                return $this->get();
+            }
         });
     }
 

@@ -5,7 +5,7 @@ return [
 
     'default_ttl' => env('FILAMENT_CACHE_TTL', 300),
 
-    'cache_store' => env('FILAMENT_CACHE_STORE', 'default'),
+    'cache_store' => env('FILAMENT_CACHE_STORE', null),
 
     'cache_pages' => env('FILAMENT_CACHE_PAGES', true),
 

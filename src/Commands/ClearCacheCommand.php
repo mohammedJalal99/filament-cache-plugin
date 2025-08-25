@@ -14,7 +14,7 @@ class ClearCacheCommand extends Command
     public function handle()
     {
         $type = $this->option('type');
-        $store = Cache::store(config('filament-cache.cache_store', 'default'));
+        $store = $this->getCacheStore();
 
         switch ($type) {
             case 'pages':
@@ -39,6 +39,23 @@ class ClearCacheCommand extends Command
         }
 
         return 0;
+    }
+
+    private function getCacheStore()
+    {
+        try {
+            $storeConfig = config('filament-cache.cache_store');
+
+            if ($storeConfig) {
+                return \Illuminate\Support\Facades\Cache::store($storeConfig);
+            }
+
+            // Use default cache store
+            return \Illuminate\Support\Facades\Cache::store();
+        } catch (\Exception $e) {
+            $this->warn('Cache store error, falling back to array cache: ' . $e->getMessage());
+            return \Illuminate\Support\Facades\Cache::store('array');
+        }
     }
 
     private function clearCacheByPattern($store, string $pattern): void

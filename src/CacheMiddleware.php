@@ -36,9 +36,11 @@ class CacheMiddleware
         $cacheKey = $this->generateCacheKey($request);
         $ttl = config('filament-cache.default_ttl', 300);
 
+        // Get cache store with fallback handling
+        $cacheStore = $this->getCacheStore();
+
         // Try to get cached response
-        $cachedResponse = Cache::store(config('filament-cache.cache_store', 'default'))
-            ->get($cacheKey);
+        $cachedResponse = $cacheStore->get($cacheKey);
 
         if ($cachedResponse !== null) {
             return response($cachedResponse['content'])
@@ -57,11 +59,33 @@ class CacheMiddleware
                 'status' => $response->getStatusCode()
             ];
 
-            Cache::store(config('filament-cache.cache_store', 'default'))
-                ->put($cacheKey, $cacheData, $ttl);
+            try {
+                $cacheStore->put($cacheKey, $cacheData, $ttl);
+            } catch (\Exception $e) {
+                // Log error but don't break the response
+                \Log::warning('Filament cache store error: ' . $e->getMessage());
+            }
         }
 
         return $response;
+    }
+
+    private function getCacheStore()
+    {
+        try {
+            $storeConfig = config('filament-cache.cache_store');
+
+            if ($storeConfig) {
+                return Cache::store($storeConfig);
+            }
+
+            // Use default cache store
+            return Cache::store();
+        } catch (\Exception $e) {
+            // Fallback to array cache if all else fails
+            \Log::warning('Cache store error, falling back to array cache: ' . $e->getMessage());
+            return Cache::store('array');
+        }
     }
 
     private function shouldSkipCache(Request $request): bool

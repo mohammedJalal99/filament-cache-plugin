@@ -8,7 +8,7 @@ class CacheHelper
 {
     public static function clearFilamentCache(): void
     {
-        $store = Cache::store(config('filament-cache.cache_store', 'default'));
+        $store = self::getCacheStore();
 
         // Clear page cache
         self::clearByPattern($store, 'filament_page_*');
@@ -22,17 +22,34 @@ class CacheHelper
 
     public static function clearPageCache(): void
     {
-        $store = Cache::store(config('filament-cache.cache_store', 'default'));
+        $store = self::getCacheStore();
         self::clearByPattern($store, 'filament_page_*');
     }
 
     public static function invalidateCacheForUser($userId = null): void
     {
         $userId = $userId ?? auth()->id() ?? 'guest';
-        $store = Cache::store(config('filament-cache.cache_store', 'default'));
+        $store = self::getCacheStore();
 
         // This is a simplified approach - in production you might want more sophisticated cache tagging
         self::clearByPattern($store, "filament_page_*{$userId}*");
+    }
+
+    private static function getCacheStore()
+    {
+        try {
+            $storeConfig = config('filament-cache.cache_store');
+
+            if ($storeConfig) {
+                return Cache::store($storeConfig);
+            }
+
+            // Use default cache store
+            return Cache::store();
+        } catch (\Exception $e) {
+            // Fallback to array cache if all else fails
+            return Cache::store('array');
+        }
     }
 
     private static function clearByPattern($store, string $pattern): void
