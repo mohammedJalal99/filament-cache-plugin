@@ -1,5 +1,4 @@
 <?php
-
 namespace FilamentCache\Commands;
 
 use Illuminate\Console\Command;
@@ -7,9 +6,9 @@ use Illuminate\Support\Facades\Cache;
 
 class ClearCacheCommand extends Command
 {
-    protected $signature = 'filament-cache:clear {--type=all : Type of cache to clear (all, pages, queries, navigation)}';
+    protected $signature = 'filament-cache:clear {--type=all : Type of cache to clear (all, pages, queries, navigation, forms, tables, widgets, permissions)}';
 
-    protected $description = 'Clear Filament cache';
+    protected $description = 'Clear Filament cache with granular control';
 
     public function handle()
     {
@@ -29,11 +28,34 @@ class ClearCacheCommand extends Command
                 $this->clearCacheByPattern($store, 'navigation_*');
                 $this->info('Navigation cache cleared successfully.');
                 break;
+            case 'forms':
+                $this->clearCacheByPattern($store, 'form_schema_*');
+                $this->info('Form cache cleared successfully.');
+                break;
+            case 'tables':
+                $this->clearCacheByPattern($store, 'table_*');
+                $this->info('Table cache cleared successfully.');
+                break;
+            case 'widgets':
+                $this->clearCacheByPattern($store, 'widget_*');
+                $this->info('Widget cache cleared successfully.');
+                break;
+            case 'permissions':
+                $this->clearCacheByPattern($store, 'user_permissions_*');
+                $this->info('Permissions cache cleared successfully.');
+                break;
             case 'all':
             default:
                 $this->clearCacheByPattern($store, 'filament_*');
                 $this->clearCacheByPattern($store, 'query_*');
                 $this->clearCacheByPattern($store, 'navigation_*');
+                $this->clearCacheByPattern($store, 'form_schema_*');
+                $this->clearCacheByPattern($store, 'table_*');
+                $this->clearCacheByPattern($store, 'widget_*');
+                $this->clearCacheByPattern($store, 'options_*');
+                $this->clearCacheByPattern($store, 'user_permissions_*');
+                $this->clearCacheByPattern($store, 'component_state_*');
+                $this->clearCacheByPattern($store, 'model_stats_*');
                 $this->info('All Filament cache cleared successfully.');
                 break;
         }

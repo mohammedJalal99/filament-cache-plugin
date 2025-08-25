@@ -85,6 +85,37 @@ class FilamentCachePlugin implements Plugin
 
     private function bootNavigationCaching(Panel $panel): void
     {
-        // Navigation caching logic here
+        // Cache navigation items
+        $panel->navigationGroups(function () {
+            $cacheKey = 'filament_navigation_groups_' . auth()->id() . '_' . app()->getLocale();
+
+            return $this->getCacheStore()->remember($cacheKey, config('filament-cache.default_ttl', 300), function () use ($panel) {
+                return $panel->getNavigationGroups();
+            });
+        });
+
+        // Cache navigation items
+        $panel->navigationItems(function () {
+            $cacheKey = 'filament_navigation_items_' . auth()->id() . '_' . app()->getLocale();
+
+            return $this->getCacheStore()->remember($cacheKey, config('filament-cache.default_ttl', 300), function () use ($panel) {
+                return $panel->getNavigationItems();
+            });
+        });
+    }
+
+    private function getCacheStore()
+    {
+        try {
+            $storeConfig = config('filament-cache.cache_store');
+
+            if ($storeConfig) {
+                return cache()->store($storeConfig);
+            }
+
+            return cache();
+        } catch (\Exception $e) {
+            return cache()->store('array');
+        }
     }
 }
