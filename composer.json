@@ -16,12 +16,8 @@
     "orchestra/testbench": "^8.0 || ^9.0 || ^10.0",
     "phpunit/phpunit": "^10.0"
   },
-  "autoload": {
-    "psr-4": { "FilamentCache\\": "src/" }
-  },
-  "autoload-dev": {
-    "psr-4": { "FilamentCache\\Tests\\": "tests/" }
-  },
+  "autoload": { "psr-4": { "FilamentCache\\": "src/" } },
+  "autoload-dev": { "psr-4": { "FilamentCache\\Tests\\": "tests/" } },
   "extra": {
     "laravel": { "providers": ["FilamentCache\\FilamentCacheServiceProvider"] },
     "branch-alias": { "dev-main": "1.x-dev" }
@@ -29,7 +25,5 @@
   "minimum-stability": "dev",
   "prefer-stable": true,
   "config": { "sort-packages": true },
-  "scripts": {
-    "test": "phpunit"
-  }
+  "scripts": { "test": "phpunit" }
 }
